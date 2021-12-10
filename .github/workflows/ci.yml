@@ -1,10 +1,10 @@
-name: Filler CI
+name: CI
 
 on:
   push:
     # Sequence of patterns matched against refs/heads
     branches:
-      - master
+      - main
       - develop
       - 'releases/**'
       - 'feature/ci*'
