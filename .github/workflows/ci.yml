@@ -1,0 +1,41 @@
+name: Filler CI
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - master
+      - develop
+      - 'releases/**'
+      - 'feature/ci*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted #It's linux now on WSL
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: '20.0.0.java11'
+      - name: env
+        run: env
+      - name: java -version
+        run: java -version
+      - name: javac -version
+        run: javac -version
+      - name: mvn -version
+        run: mvn -version
+      - name: chmod
+        run: chmod 755 ./mvnw
+      # Don't know why it is now mandatory to login to docker first when using jib...
+      - name: Log into registry
+        run: echo "${{ secrets.DockerHubPassword }}" | docker login registry.hub.docker.com -u ${{ secrets.DockerHubUsername }} --password-stdin
+      - name: Build native with Jib and push
+        run: ./mvnw -B clean verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.tag=native-${GITHUB_REF##*/}'-${quarkus.application.version:latest}' -Dquarkus.container-image.username=${{ secrets.DockerHubUsername }} -Dquarkus.container-image.password=${{ secrets.DockerHubPassword }}
