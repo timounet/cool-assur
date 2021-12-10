@@ -13,15 +13,15 @@ import javax.ws.rs.core.Application
     info = Info(title = "CoolAssur Application",
         description = "Cette Api permet d'interagir avec l'application coolAssur",
         version = "1.0",
-        contact = Contact(name = "cool Assur fake contact", url = "https://cool.assur")
+        contact = Contact(name = "cool Assur fake contact", url = "https://cool.assur", email = "support@example.com")
     ),
     servers = [
-        Server(url = "https://localhost:8080"),
-        Server(url = "http://recette-host"),
-        Server(url = "http://prod-host")
+        Server(url = "http://localhost:8080"),
+        Server(url = "https://recette-host"),
+        Server(url = "https://prod-host")
     ],
     tags = [
-        Tag(name = "contrat", description = "tout ce qui touche aux contrats")
+
     ]
 )
 class WebApplication: Application() {
