@@ -21,17 +21,20 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: DeLaGuardo/setup-graalvm@master
+      - uses: DeLaGuardo/setup-graalvm@5.0
         with:
-          graalvm-version: '20.0.0.java11'
+          # GraalVM version, no pattern syntax available atm
+          graalvm: '21.0.0.2'
+          # Java version, optional, defaults to 'java8'. Available options are 'java8' and 'java11'.
+          java: 'java11'
+          # Architecture flag, optional, defaults to 'amd64'. Available options are 'amd64' and 'aarch64'. Later is available only for linux runners.
+          arch: 'amd64'
       - name: env
         run: env
       - name: java -version
         run: java -version
       - name: javac -version
         run: javac -version
-      - name: mvn -version
-        run: mvn -version
       - name: chmod
         run: chmod 755 ./mvnw
       # Don't know why it is now mandatory to login to docker first when using jib...
