@@ -1,6 +1,6 @@
 package org.acme.resources
 
-import org.acme.sample.SampleValues
+import org.acme.services.ContractService
 import org.acme.vo.Contract
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterStyle
@@ -15,6 +15,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import java.io.FileInputStream
 import java.net.URI
 import java.util.*
+import javax.enterprise.inject.Default
+import javax.inject.Inject
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -24,12 +26,9 @@ import javax.ws.rs.core.Response
 @Produces(MediaType.APPLICATION_JSON)
 class ContractResource {
 
-    private var contracts: Set<Contract> = Collections.synchronizedSet(LinkedHashSet())
-
-    init {
-        contracts = contracts.plusElement(SampleValues.contract1).plusElement(SampleValues.contract2)
-            .plusElement(SampleValues.contract3)
-    }
+    @Inject
+    @field: Default
+    lateinit var service: ContractService
 
     @GET
     @Path("/contracts")
@@ -57,8 +56,8 @@ class ContractResource {
         @Parameter(description = "Recherche plain text", example = "c1 big risk")
         @QueryParam("query") query: String?
     ): Response = Response.ok(
-        contracts.sortedBy { it.number }.toList()
-            .subList(offset, (offset + limit).coerceAtMost(contracts.size))
+        service.getContracts().sortedBy { it.number }.toList()
+            .subList(offset, (offset + limit).coerceAtMost(service.getContracts().size))
     ).build()
 
     @POST
@@ -81,7 +80,7 @@ class ContractResource {
             )]
         ) c: Contract
     ): Response {
-        contracts = contracts.plusElement(c)
+        service.addContract(c)
         return Response.created(URI.create("/v1/contracts/" + c.number)).build()
     }
 
@@ -107,8 +106,9 @@ class ContractResource {
             )]
         ) c: Contract
     ): Response {
-        val contrat = contracts.find { it.number == c.number } ?: return Response.status(404).build()
-        contracts = contracts.minusElement(contrat).plusElement(c)
+        val contrat = service.getContracts().find { it.number == c.number } ?: return Response.status(404).build()
+        service.delContract(contrat)
+        service.addContract(c)
         return Response.created(URI.create("/v1/contracts/" + c.number)).build()
     }
 
@@ -128,8 +128,8 @@ class ContractResource {
             )]
         ) c: Contract
     ): Response {
-        val contrat = contracts.find { it.number == c.number } ?: return Response.status(404).build()
-        contracts = contracts.minus(contrat)
+        val contrat = service.getContracts().find { it.number == c.number } ?: return Response.status(404).build()
+        service.delContract(contrat)
         return Response.noContent().build()
     }
 
@@ -150,7 +150,7 @@ class ContractResource {
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
-        val contrat = contracts.find { it.number == number } ?: return Response.status(404).build()
+        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         return Response.ok(contrat).build()
     }
 
@@ -159,17 +159,21 @@ class ContractResource {
     @Path("/contracts/{number}/image-preview")
     @Operation(summary = "Génere une image aperçu du contrat")
     @Produces("image/png")
-    @APIResponse(responseCode = "200", description = "binaire: une image d'aperçu du contrat", content =
-    [Content(mediaType = "image/png",
-        schema = Schema(type = SchemaType.STRING, format = "binary")
-    )]
+    @APIResponse(
+        responseCode = "200", description = "binaire: une image d'aperçu du contrat", content =
+        [Content(
+            mediaType = "image/png",
+            schema = Schema(type = SchemaType.STRING, format = "binary")
+        )]
     )
     fun contractImgPreview(
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
-        @PathParam("number") number: String): Response = Response.ok(
-                FileInputStream(
-                ShowcaseResource::class.java.getResource("/samples/contract-preview.png")!!.file)
-            ).header("Content-Disposition", "attachment; filename=contract-${number}-preview.png").build()
+        @PathParam("number") number: String
+    ): Response = Response.ok(
+        FileInputStream(
+            ShowcaseResource::class.java.getResource("/samples/contract-preview.png")!!.file
+        )
+    ).header("Content-Disposition", "attachment; filename=contract-${number}-preview.png").build()
 
 
     @GET
@@ -206,7 +210,7 @@ class ContractResource {
         @Parameter(description = "Recherche plain text", example = "c1 big risk")
         @QueryParam("query") query: String?
     ): Response {
-        var tmp = contracts.filter { it.personId == id }
+        var tmp = service.getContracts().filter { it.personId == id }
         return Response.ok(
             tmp.sortedBy { it.number }.toList()
                 .subList(offset, (offset + limit).coerceAtMost(tmp.size))
