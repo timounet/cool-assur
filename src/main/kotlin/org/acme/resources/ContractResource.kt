@@ -4,6 +4,7 @@ import org.acme.sample.SampleValues
 import org.acme.vo.Contract
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterStyle
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
@@ -11,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
+import java.io.FileInputStream
 import java.net.URI
 import java.util.*
 import javax.ws.rs.*
@@ -18,7 +20,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion des contrats", description = "tout ce qui touche aux contrats")
-@Path("/v1/contracts")
+@Path("/v1/")
 @Produces(MediaType.APPLICATION_JSON)
 class ContractResource {
 
@@ -30,7 +32,7 @@ class ContractResource {
     }
 
     @GET
-    @Path("/")
+    @Path("/contracts")
     @Operation(summary = "liste les contrats")
     @APIResponse(
         responseCode = "200", description = "liste avec succes",
@@ -60,7 +62,7 @@ class ContractResource {
     ).build()
 
     @POST
-    @Path("/")
+    @Path("/contracts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Ajout un nouveau contrat")
     @APIResponse(
@@ -84,7 +86,7 @@ class ContractResource {
     }
 
     @PUT
-    @Path("/")
+    @Path("/contracts")
     @Operation(summary = "Modifie un contrat existant")
     @Consumes(MediaType.APPLICATION_JSON)
     @APIResponses(
@@ -111,7 +113,7 @@ class ContractResource {
     }
 
     @DELETE
-    @Path("/")
+    @Path("/contracts")
     @Operation(summary = "Supprime un contract")
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
@@ -133,7 +135,7 @@ class ContractResource {
 
 
     @GET
-    @Path("/{number}")
+    @Path("/contracts/{number}")
     @Operation(summary = "Recupere le contrat par son numéro")
     @APIResponses(
         APIResponse(
@@ -152,9 +154,27 @@ class ContractResource {
         return Response.ok(contrat).build()
     }
 
+
+    @GET
+    @Path("/contracts/{number}/image-preview")
+    @Operation(summary = "Génere une image aperçu du contrat")
+    @Produces("image/png")
+    @APIResponse(responseCode = "200", description = "binaire: une image d'aperçu du contrat", content =
+    [Content(mediaType = "image/png",
+        schema = Schema(type = SchemaType.STRING, format = "binary")
+    )]
+    )
+    fun contractImgPreview(
+        @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
+        @PathParam("number") number: String): Response = Response.ok(
+                FileInputStream(
+                ShowcaseResource::class.java.getResource("/samples/contract-preview.png")!!.file)
+            ).header("Content-Disposition", "attachment; filename=contract-${number}-preview.png").build()
+
+
     @GET
     @Path("/persons/{id}/contracts")
-    @Operation(summary = "liste les contrats")
+    @Operation(summary = "Retrouve les contrats d'une personne")
     @APIResponses(
         APIResponse(
             responseCode = "200", description = "liste avec succes",
