@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     # runs-on: self-hosted #It's linux now on WSL
     steps:
-      name: Send a message to Microsoft Teams
+      - name: Send a message to Microsoft Teams
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ TEAMS_WEBHOOK }}
