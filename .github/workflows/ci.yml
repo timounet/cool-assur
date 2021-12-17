@@ -42,3 +42,14 @@ jobs:
         run: echo "${{ secrets.DockerHubPassword }}" | docker login registry.hub.docker.com -u ${{ secrets.DockerHubUsername }} --password-stdin
       - name: Build native with Jib and push
         run: ./mvnw -B clean verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.tag=native-${GITHUB_REF##*/}'-${quarkus.application.version:latest}' -Dquarkus.container-image.username=${{ secrets.DockerHubUsername }} -Dquarkus.container-image.password=${{ secrets.DockerHubPassword }}
+      - name: Send a message to Microsoft Teams
+        if: ${{ success() }}
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ secrets.TEAMS_WEBHOOK }}
+          title: "Nouvelle version ${{ github.event.repository.name }} disponible: ${{ github.ref_name}}"
+          summary: "Image docker buildee: native-${{ github.ref_name}}"
+          text: "How to run \n ```docker tperdriau/cool-assur:native-${{ github.ref_name}} pull && docker run --rm --name ca -p 8080:8080 tperdriau/cool-assur:native-${{ github.ref_name}}```"
+          theme_color: " #2b8e18"
+          # sections: '[{ "activityTitle": "hello world" }]'
+          actions: '[{ "@type": "OpenUri", "name": "dockerHub", "targets": [{ "os": "default", "uri": "https://hub.docker.com/repository/docker/tperdriau/cool-assur" }] }]'
