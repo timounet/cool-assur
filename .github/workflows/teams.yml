@@ -13,7 +13,7 @@ jobs:
       - name: Send a message to Microsoft Teams
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
-          webhook_uri: ${{ TEAMS_WEBHOOK }}
+          webhook_uri: ${{ secrets.TEAMS_WEBHOOK }}
           title: welcome
           summary: <Message Summary>
           text: <Message Text>
