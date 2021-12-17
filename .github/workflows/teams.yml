@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - 'feature/teams'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted #It's linux now on WSL
+    steps:
+      name: Send a message to Microsoft Teams
+        uses: aliencube/microsoft-teams-actions@v0.8.0
+        with:
+          webhook_uri: ${{ TEAMS_WEBHOOK }}
+          title: welcome
+          summary: <Message Summary>
+          text: <Message Text>
+          theme_color: red
+          sections: '[{ "activityTitle": "hello world" }, { ... }]'
+          actions: '[{ "@type": "OpenUri", "name": "lorem ipsum", "targets": [{ "os": "default", "uri": "https://localhost" }] }, { ... }]'
