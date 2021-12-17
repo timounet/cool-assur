@@ -3,12 +3,15 @@ package org.acme.resources
 import org.acme.sample.SampleValues
 import org.acme.vo.Person
 import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import java.net.URI
 import java.util.*
@@ -20,6 +23,14 @@ import javax.ws.rs.core.Response
 @Tag(name = "Gestion des personnes", description = "Une ressource orienté sur la gestion des personnes")
 @Path("/v1/persons")
 @Produces(MediaType.APPLICATION_JSON)
+@SecurityScheme(
+    securitySchemeName = "Authentication",
+    description = "JWT token",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    `in` = SecuritySchemeIn.HEADER
+)
 class PersonResouce {
 
     private var persons: Set<Person> = Collections.synchronizedSet(LinkedHashSet())

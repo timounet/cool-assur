@@ -3,11 +3,14 @@ package org.acme.resources
 import org.acme.services.ContractService
 import org.acme.vo.Premium
 import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import javax.enterprise.inject.Default
 import javax.inject.Inject
@@ -18,6 +21,14 @@ import javax.ws.rs.core.Response
 @Tag(name = "Gestion des cotisations", description = "tout ce qui touche aux cotisations")
 @Path("/v1/")
 @Produces(MediaType.APPLICATION_JSON)
+@SecurityScheme(
+    securitySchemeName = "Authentication",
+    description = "JWT token",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    `in` = SecuritySchemeIn.HEADER
+)
 class PremiumResource {
 
     @Inject
