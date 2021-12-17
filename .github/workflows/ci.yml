@@ -48,7 +48,7 @@ jobs:
         with:
           webhook_uri: ${{ secrets.TEAMS_WEBHOOK }}
           title: "Nouvelle version ${{ github.event.repository.name }} disponible: ${{ github.ref_name}}"
-          summary: "Image docker buildee: native-${{ github.ref_name}}"
+          summary: "Image docker buildee: native-${{ github.ref_name}}'-${quarkus.application.version:latest}'"
           text: "How to run \n ```docker tperdriau/cool-assur:native-${{ github.ref_name}} pull && docker run --rm --name ca -p 8080:8080 tperdriau/cool-assur:native-${{ github.ref_name}}```"
           theme_color: " #2b8e18"
           # sections: '[{ "activityTitle": "hello world" }]'
