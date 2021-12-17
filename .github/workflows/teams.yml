@@ -14,9 +14,9 @@ jobs:
         uses: aliencube/microsoft-teams-actions@v0.8.0
         with:
           webhook_uri: ${{ secrets.TEAMS_WEBHOOK }}
-          title: welcome
-          summary: "<Message Summary>"
-          text: "<Message Text>"
-          theme_color: red
-          sections: '[{ "activityTitle": "hello world" }]'
-          actions: '[{ "@type": "OpenUri", "name": "lorem ipsum", "targets": [{ "os": "default", "uri": "https://localhost" }] }]'
+          title: "Nouvelle version CoolAssur disponible"
+          summary: "Image docker buildee disponible"
+          text: "Prêt à être deployé"
+          theme_color: " #2b8e18"
+          # sections: '[{ "activityTitle": "hello world" }]'
+          actions: '[{ "@type": "OpenUri", "name": "nouvelle image", "targets": [{ "os": "default", "uri": "https://localhost" }] }]'
