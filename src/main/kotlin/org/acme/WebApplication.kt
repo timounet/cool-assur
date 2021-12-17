@@ -16,6 +16,7 @@ import javax.ws.rs.core.Application
         contact = Contact(name = "cool Assur fake contact", url = "https://cool.assur", email = "support@example.com")
     ),
     servers = [
+        Server(url = "https://uat-france.apis.allianz.com/aq/formation/coolassur"),
         Server(url = "https://dev-france.apis.allianz/aq/formation/coolassur"),
         Server(url = "http://localhost:8080"),
         Server(url = "https://recette-host"),
