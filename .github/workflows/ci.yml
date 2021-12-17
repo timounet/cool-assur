@@ -48,8 +48,8 @@ jobs:
         with:
           webhook_uri: ${{ secrets.TEAMS_WEBHOOK }}
           title: "Nouvelle version ${{ github.event.repository.name }} disponible: ${GITHUB_REF##*/}"
-          summary: "Image docker buildee: native-${GITHUB_REF##*/}"
-          text: "docker tperdriau/cool-assur:native-${GITHUB_REF##*/} pull && docker run --rm --name ca -p 8080:8080 tperdriau/cool-assur:native-${GITHUB_REF##*/}"
+          summary: "Image docker buildee: native-${{GITHUB_REF##*/}}"
+          text: "How to run \n ```docker tperdriau/cool-assur:native-${{GITHUB_REF##*/}} pull && docker run --rm --name ca -p 8080:8080 tperdriau/cool-assur:native-${{GITHUB_REF##*/}}```"
           theme_color: " #2b8e18"
           # sections: '[{ "activityTitle": "hello world" }]'
           actions: '[{ "@type": "OpenUri", "name": "dockerHub", "targets": [{ "os": "default", "uri": "https://hub.docker.com/repository/docker/tperdriau/cool-assur" }] }]'
