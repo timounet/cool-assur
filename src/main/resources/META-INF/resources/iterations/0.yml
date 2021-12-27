@@ -9,62 +9,62 @@ info:
     email: support@example.com
   version: "1.0"
 servers:
-- url: https://uat-france.apis.allianz.com/aq/formation/coolassur
-  description: uat avec ApiGee
-- url: http://localhost:8080
-  description: dev
-- url: https://recette-host
-  description: recette
-- url: https://prod-host
-  description: prod
-- url: https://coolassur.adho.fr
-  description: uat sans ApiGee
+  - url: https://uat-france.apis.allianz.com/aq/formation/coolassur
+    description: uat avec ApiGee
+  - url: http://localhost:8080
+    description: dev
+  - url: https://recette-host
+    description: recette
+  - url: https://prod-host
+    description: prod
+  - url: https://coolassur.adho.fr
+    description: uat sans ApiGee
 tags:
-- name: Gestion des contrats
-  description: tout ce qui touche aux contrats
-- name: Gestion des utilisateur
-  description: une resource pour les utilisateurs de l'application
+  - name: Gestion des contrats
+    description: tout ce qui touche aux contrats
+  - name: Gestion des utilisateur
+    description: une ressource pour les utilisateurs de l'application
 paths:
   /v1/contracts:
     get:
       tags:
-      - Gestion des contrats
+        - Gestion des contrats
       summary: liste les contrats
       parameters:
-      - name: limit
-        in: query
-        description: "nombre max d’élément dans la liste, default 20"
-        schema:
-          format: int32
-          type: integer
-        example: 20
-      - name: numbers
-        in: query
-        schema:
-          type: string
-      - name: offset
-        in: query
-        description: "débuter la liste à cette valeur offset, default 0"
-        schema:
-          format: int32
-          type: integer
-        example: 0
-      - name: query
-        in: query
-        description: Recherche plain text
-        schema:
-          type: string
-        example: c1 big risk
-      - name: sortBy
-        in: query
-        description: "trier la liste sur un champ, defaut 'asc(number)'"
-        schema:
-          type: string
-      - name: status
-        in: query
-        description: filtrer par status
-        schema:
-          type: string
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: numbers
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: query
+          in: query
+          description: Recherche plain text
+          schema:
+            type: string
+          example: c1 big risk
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(number)'"
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: filtrer par status
+          schema:
+            type: string
       responses:
         "200":
           description: liste avec succes
@@ -77,7 +77,7 @@ paths:
   /v1/users/authenticate:
     get:
       tags:
-      - Gestion des utilisateur
+        - Gestion des utilisateur
       summary: Authentifie et recupère un nouveau jeton jwt de l'utilisateur connecté
       responses:
         "200":

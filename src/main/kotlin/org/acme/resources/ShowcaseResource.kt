@@ -14,7 +14,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Tag(name = "z Autres demonstrations", description = "une resource pour montrer d'autres comportements")
+@Tag(name = "z Autres demonstrations", description = "une ressource pour montrer d'autres comportements")
 @Path("/showcase")
 class ShowcaseResource {
 

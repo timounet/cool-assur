@@ -1,0 +1,720 @@
+---
+openapi: 3.0.3
+info:
+  title: CoolAssur Application
+  description: Cette Api permet d'interagir avec l'application coolAssur
+  contact:
+    name: cool Assur fake contact
+    url: https://cool.assur
+    email: support@example.com
+  version: "1.0"
+servers:
+  - url: https://uat-france.apis.allianz.com/aq/formation/coolassur
+    description: uat avec ApiGee
+  - url: http://localhost:8080
+    description: dev
+  - url: https://recette-host
+    description: recette
+  - url: https://prod-host
+    description: prod
+  - url: https://coolassur.adho.fr
+    description: uat sans ApiGee
+tags:
+  - name: Gestion des contrats
+    description: tout ce qui touche aux contrats
+  - name: Gestion des cotisations
+    description: tout ce qui touche aux cotisations
+  - name: Gestion des paiements
+    description: tout ce qui touche aux paiements
+  - name: Gestion des personnes
+    description: Une ressource orienté sur la gestion des personnes
+  - name: Gestion des utilisateur
+    description: une ressource pour les utilisateurs de l'application
+  - name: Gestion du solde
+    description: tout ce qui touche aux soldes pour les comptes
+  - name: z Autres demonstrations
+    description: une ressource pour montrer d'autres comportements
+paths:
+  /v1/balance:
+    get:
+      tags:
+        - Gestion du solde
+      summary: retrouve le solde
+      parameters:
+        - name: id
+          in: query
+          description: filtrer par id d'assuré
+          schema:
+            format: int32
+            type: integer
+        - name: number
+          in: query
+          description: filtrer par numéro de contrat
+          schema:
+            type: string
+      responses:
+        "200":
+          description: calcul le solde avec succes
+          content:
+            text/plain:
+              schema:
+                format: float
+                type: number
+  /v1/contracts:
+    get:
+      tags:
+        - Gestion des contrats
+      summary: liste les contrats
+      parameters:
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: numbers
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: query
+          in: query
+          description: Recherche plain text
+          schema:
+            type: string
+          example: c1 big risk
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(number)'"
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: filtrer par status
+          schema:
+            type: string
+      responses:
+        "200":
+          description: liste avec succes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contract'
+    put:
+      tags:
+        - Gestion des contrats
+      summary: Modifie un contrat existant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contract'
+        required: true
+      responses:
+        "201":
+          description: modification reussie
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/contracts/c1
+        "404":
+          description: Not found
+      deprecated: false
+    post:
+      tags:
+        - Gestion des contrats
+      summary: Ajout un nouveau contrat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contract'
+        required: true
+      responses:
+        "201":
+          description: creation réussie
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/contracts/c1
+    delete:
+      tags:
+        - Gestion des contrats
+      summary: Supprime un contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contract'
+        required: true
+      responses:
+        "204":
+          description: suppression réussie
+        "404":
+          description: Not found
+      deprecated: false
+  /v1/contracts/{number}:
+    get:
+      tags:
+        - Gestion des contrats
+      summary: Recupere le contrat par son numéro
+      parameters:
+        - name: number
+          in: path
+          description: retrouver un contrat par son numéro
+          required: true
+          schema:
+            type: string
+          example: c1
+      responses:
+        "200":
+          description: succes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        "404":
+          description: Not found
+  /v1/contracts/{number}/image-preview:
+    get:
+      tags:
+        - Gestion des contrats
+      summary: Génere une image aperçu du contrat
+      parameters:
+        - name: number
+          in: path
+          description: retrouver un contrat par son numéro
+          required: true
+          schema:
+            type: string
+          example: c1
+      responses:
+        "200":
+          description: "binaire: une image d'aperçu du contrat"
+          content:
+            image/png:
+              schema:
+                format: binary
+                type: string
+  /v1/contracts/{number}/payments:
+    get:
+      tags:
+        - Gestion des paiements
+      summary: Retrouve les paiements d'un contrat donné
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(dueDate)'"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: liste avec succes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        "404":
+          description: contract Not found
+    post:
+      tags:
+        - Gestion des paiements
+      summary: Ajout un nouveau paiement de prime au contrat
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        "201":
+          description: creation réussie
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/contracts/c1/payments
+        "404":
+          description: Not found
+    delete:
+      tags:
+        - Gestion des paiements
+      summary: Supprime un paiement au contract
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        "204":
+          description: suppression réussie
+        "404":
+          description: Not found
+  /v1/contracts/{number}/premiums:
+    get:
+      tags:
+        - Gestion des cotisations
+      summary: Retrouve les cotisation d'un contrat donné
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(dueDate)'"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: liste avec succes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Premium'
+        "404":
+          description: contract Not found
+    post:
+      tags:
+        - Gestion des cotisations
+      summary: Ajout un nouvel appel de prime au contrat
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Premium'
+        required: true
+      responses:
+        "201":
+          description: creation réussie
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/contracts/c1/premiums
+        "404":
+          description: Not found
+    delete:
+      tags:
+        - Gestion des cotisations
+      summary: Supprime un appel de prime au contract
+      parameters:
+        - name: number
+          in: path
+          description: numero de contrat
+          required: true
+          schema:
+            type: string
+          example: c1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Premium'
+        required: true
+      responses:
+        "204":
+          description: suppression réussie
+        "404":
+          description: Not found
+  /v1/persons:
+    get:
+      tags:
+        - Gestion des personnes
+      summary: liste les personnes
+      parameters:
+        - name: firstname
+          in: query
+          description: filtrer par prénom
+          schema:
+            type: string
+        - name: lastname
+          in: query
+          description: filtrer par nom
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: query
+          in: query
+          description: Recherche plain text
+          schema:
+            type: string
+          example: Bruce Ouillis Paris
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(id)'"
+          schema:
+            type: string
+      responses:
+        "200":
+          description: liste réussie
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+    put:
+      tags:
+        - Gestion des personnes
+      summary: Modifie une personne existante
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+        required: true
+      responses:
+        "201":
+          description: modification réussie
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/persons/1
+        "404":
+          description: Not found
+    post:
+      tags:
+        - Gestion des personnes
+      summary: Ajout une nouvelle personne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+        required: true
+      responses:
+        "201":
+          description: ajout réussi
+          content:
+            application/json:
+              schema:
+                format: uri
+                type: string
+              example: http://server:port/v1/persons/1
+    delete:
+      tags:
+        - Gestion des personnes
+      summary: Supprime une personne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+        required: true
+      responses:
+        "204":
+          description: Suppression réussie
+        "404":
+          description: Not found
+  /v1/persons/{id}:
+    get:
+      tags:
+        - Gestion des personnes
+      summary: liste les personnes
+      parameters:
+        - name: id
+          in: path
+          description: retrouver une personne par id
+          required: true
+          schema:
+            format: int32
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: listing reussi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        "404":
+          description: Not found
+  /v1/persons/{id}/contracts:
+    get:
+      tags:
+        - Gestion des contrats
+      summary: Retrouve les contrats d'une personne
+      parameters:
+        - name: id
+          in: path
+          description: id de la personne
+          required: true
+          schema:
+            format: int32
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: "nombre max d’élément dans la liste, default 20"
+          schema:
+            format: int32
+            type: integer
+          example: 20
+        - name: numbers
+          in: query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: "débuter la liste à cette valeur offset, default 0"
+          schema:
+            format: int32
+            type: integer
+          example: 0
+        - name: query
+          in: query
+          description: Recherche plain text
+          schema:
+            type: string
+          example: c1 big risk
+        - name: sortBy
+          in: query
+          description: "trier la liste sur un champ, defaut 'asc(number)'"
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: filtrer par status
+          schema:
+            type: string
+          deprecated: true
+      responses:
+        "200":
+          description: liste avec succes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contract'
+        "404":
+          description: Person Not found
+  /v1/showcase/randomError:
+    get:
+      tags:
+        - z Autres demonstrations
+      summary: Génere parfois une erreur aléatoire
+      responses:
+        "200":
+          description: random
+          content:
+            text/plain:
+              schema:
+                type: string
+  /v1/showcase/version:
+    get:
+      tags:
+        - z Autres demonstrations
+      summary: Récupère la version logicielle
+      responses:
+        "200":
+          description: random
+          content:
+            text/plain:
+              schema:
+                type: string
+  /v1/users/authenticate:
+    get:
+      tags:
+        - Gestion des utilisateur
+      summary: Authentifie et recupère un nouveau jeton jwt de l'utilisateur connecté
+      responses:
+        "200":
+          description: liste réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+  /v1/users/me:
+    get:
+      tags:
+        - Gestion des utilisateur
+      summary: Information sur l'utilisateur connecté
+      responses:
+        "200":
+          description: liste réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    Contract:
+      type: object
+      properties:
+        number:
+          type: string
+        risk:
+          type: string
+        status:
+          type: string
+        personId:
+          format: int32
+          type: integer
+        premiums:
+          type: array
+          items:
+            $ref: '#/components/schemas/Premium'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+    Payment:
+      type: object
+      properties:
+        amount:
+          format: float
+          type: number
+        type:
+          type: string
+        date:
+          type: string
+    Person:
+      type: object
+      properties:
+        address:
+          type: string
+        firstName:
+          type: string
+        job:
+          type: string
+        lastName:
+          type: string
+        mail:
+          type: string
+        nationality:
+          type: string
+        phone:
+          type: string
+        id:
+          format: int32
+          type: integer
+    Premium:
+      type: object
+      properties:
+        amount:
+          format: float
+          type: number
+        dueDate:
+          type: string
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        job:
+          type: string
+        lastName:
+          type: string
+        mail:
+          type: string
+  securitySchemes:
+    Authentication:
+      type: http
+      description: JWT token
+      in: header
+      scheme: bearer
+      bearerFormat: JWT
