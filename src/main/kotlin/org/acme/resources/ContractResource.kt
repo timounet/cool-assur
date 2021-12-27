@@ -117,8 +117,8 @@ class ContractResource {
             )]
         ) c: Contract
     ): Response {
-        val contrat = service.getContracts().find { it.number == c.number } ?: return Response.status(404).build()
-        service.delContract(contrat)
+        val contract = service.getContracts().find { it.number == c.number } ?: return Response.status(404).build()
+        service.delContract(contract)
         service.addContract(c)
         return Response.created(URI.create("/v1/contracts/" + c.number)).build()
     }
@@ -190,8 +190,8 @@ class ContractResource {
         @Parameter(description = "modifie un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
-        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
-        service.delContract(contrat)
+        val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        service.delContract(contract)
         service.addContract(c)
         return Response.created(URI.create("/v1/contracts/$number")).build()
     }
@@ -207,8 +207,8 @@ class ContractResource {
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
-        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
-        service.delContract(contrat)
+        val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        service.delContract(contract)
         return Response.noContent().build()
     }
 
