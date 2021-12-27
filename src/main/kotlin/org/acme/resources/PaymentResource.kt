@@ -1,7 +1,7 @@
 package org.acme.resources
 
 import org.acme.services.ContractService
-import org.acme.vo.Premium
+import org.acme.vo.Payment
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -20,7 +20,7 @@ import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Tag(name = "Gestion des cotisations", description = "tout ce qui touche aux cotisations")
+@Tag(name = "Gestion des paiements", description = "tout ce qui touche aux paiements")
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @SecurityScheme(
@@ -31,25 +31,25 @@ import javax.ws.rs.core.Response
     bearerFormat = "JWT",
     `in` = SecuritySchemeIn.HEADER
 )
-class PremiumResource {
+class PaymentResource {
 
     @Inject
     @field: Default
     lateinit var service: ContractService
 
     @GET
-    @Path("/contracts/{number}/premiums")
-    @Operation(summary = "Retrouve les cotisation d'un contrat donné")
+    @Path("/contracts/{number}/payments")
+    @Operation(summary = "Retrouve les paiements d'un contrat donné")
     @APIResponses(
         APIResponse(
             responseCode = "200", description = "liste avec succes",
             content = [Content(
                 mediaType = MediaType.APPLICATION_JSON,
-                schema = Schema(implementation = Array<Premium>::class)
+                schema = Schema(implementation = Array<Payment>::class)
             )]
         ), APIResponse(responseCode = "404", description = "contract Not found")
     )
-    fun listContractPremiums(
+    fun listContractPayments(
         @Parameter(
             description = "numero de contrat",
             example = "c1",
@@ -63,34 +63,34 @@ class PremiumResource {
         @Parameter(description = "trier la liste sur un champ, defaut 'asc(dueDate)'")
         @QueryParam("sortBy") orderBy: String?
     ): Response {
-        val tmp = service.getContracts().first { it.number == number }.premiums
+        val tmp = service.getContracts().first { it.number == number }.payments
         return Response.ok(
             tmp.subList(offset, (offset + limit).coerceAtMost(tmp.size))
         ).build()
     }
 
     @POST
-    @Path("/contracts/{number}/premiums")
+    @Path("/contracts/{number}/payments")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Ajout un nouvel appel de prime au contrat")
+    @Operation(summary = "Ajout un nouveau paiement de prime au contrat")
     @APIResponses(
         APIResponse(
             responseCode = "201", description = "creation réussie",
             content = [Content(
                 mediaType = MediaType.APPLICATION_JSON,
-                schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1/premiums"
+                schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1/payments"
             )]
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
-    fun addContractPremium(
+    fun addContractPayment(
         @RequestBody(
             required = true,
             content = [Content(
                 mediaType = MediaType.APPLICATION_JSON, schema =
-                Schema(implementation = Premium::class)
+                Schema(implementation = Payment::class)
             )]
-        ) p: Premium,
+        ) p: Payment,
         @Parameter(
             description = "numero de contrat",
             example = "c1",
@@ -99,27 +99,27 @@ class PremiumResource {
     ): Response {
         val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         service.delContract(contract)
-        contract.premiums = contract.premiums.plusElement(p)
+        contract.payments = contract.payments.plusElement(p)
         service.addContract(contract)
-        return Response.created(URI.create("/v1/contracts/$number/premiums")).build()
+        return Response.created(URI.create("/v1/contracts/$number/payments")).build()
     }
 
 
     @DELETE
-    @Path("/contracts/{number}/premiums")
-    @Operation(summary = "Supprime un appel de prime au contract")
+    @Path("/contracts/{number}/payments")
+    @Operation(summary = "Supprime un paiement au contract")
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
     )
-    fun delContractPremium(
+    fun delContractPayment(
         @RequestBody(
             required = true,
             content = [Content(
                 mediaType = MediaType.APPLICATION_JSON, schema =
-                Schema(implementation = Premium::class)
+                Schema(implementation = Payment::class)
             )]
-        ) p: Premium,
+        ) p: Payment,
         @Parameter(
             description = "numero de contrat",
             example = "c1",
@@ -127,13 +127,13 @@ class PremiumResource {
         ) @PathParam("number") number: String
     ): Response {
         val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
-        val premium =
-            contract.premiums.find { it.amount == p.amount && it.dueDate == p.dueDate } ?: return Response.status(
+        val payment =
+            contract.payments.find { it.amount == p.amount && it.date == p.date } ?: return Response.status(
                 404
             )
                 .build()
         service.delContract(contract)
-        contract.premiums = contract.premiums.minusElement(premium)
+        contract.payments = contract.payments.minusElement(payment)
         service.addContract(contract)
         return Response.noContent().build()
     }
