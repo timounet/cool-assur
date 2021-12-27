@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion des cotisations", description = "tout ce qui touche aux cotisations")
-@Path("/v1/")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @SecurityScheme(
     securitySchemeName = "Authentication",

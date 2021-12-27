@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "z Autres demonstrations", description = "une resource pour montrer d'autres comportements")
-@Path("/v1/showcase")
+@Path("/showcase")
 class ShowcaseResource {
 
     @Inject
@@ -35,9 +35,9 @@ class ShowcaseResource {
     @Produces(MediaType.TEXT_PLAIN)
     fun randomError(): Response {
         val rnds = (0..1).random()
-        if (rnds > 0) return Response.ok("Success: tout est ok").build()
+        return if (rnds > 0) Response.ok("Success: tout est ok").build()
         else
-            return Response.serverError().entity("Failure: db est ko").build()
+            Response.serverError().entity("Failure: db est ko").build()
 
     }
 

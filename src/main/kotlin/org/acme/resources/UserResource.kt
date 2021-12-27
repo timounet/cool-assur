@@ -17,7 +17,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion des utilisateur", description = "une resource pour les utilisateurs de l'application")
-@Path("/v1/users")
+@Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 class UserResource {
     @GET

@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response
 
 
 @Tag(name = "Gestion des personnes", description = "Une ressource orienté sur la gestion des personnes")
-@Path("/v1/persons")
+@Path("/persons")
 @Produces(MediaType.APPLICATION_JSON)
 @SecurityScheme(
     securitySchemeName = "Authentication",
