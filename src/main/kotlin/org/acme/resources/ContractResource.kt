@@ -97,7 +97,7 @@ class ContractResource {
 
     @PUT
     @Path("/contracts")
-    @Operation(summary = "Modifie un contrat existant")
+    @Operation(summary = "Modifie un contrat existant", deprecated = true)
     @Consumes(MediaType.APPLICATION_JSON)
     @APIResponses(
         APIResponse(
@@ -125,7 +125,7 @@ class ContractResource {
 
     @DELETE
     @Path("/contracts")
-    @Operation(summary = "Supprime un contract")
+    @Operation(summary = "Supprime un contract", deprecated = true)
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
@@ -163,6 +163,53 @@ class ContractResource {
     ): Response {
         val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         return Response.ok(contrat).build()
+    }
+
+
+    @PUT
+    @Path("/contracts/{number}")
+    @Operation(summary = "Modifie un contrat existant par son numéro")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @APIResponses(
+        APIResponse(
+            responseCode = "201", description = "modification reussie", content = [Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1"
+            )]
+        ),
+        APIResponse(responseCode = "404", description = "Not found")
+    )
+    fun updateContractByNum(
+        @RequestBody(
+            required = true,
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON, schema =
+                Schema(implementation = Contract::class)
+            )]
+        ) c: Contract,
+        @Parameter(description = "modifie un contrat par son numéro", example = "c1")
+        @PathParam("number") number: String
+    ): Response {
+        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        service.delContract(contrat)
+        service.addContract(c)
+        return Response.created(URI.create("/v1/contracts/$number")).build()
+    }
+
+    @DELETE
+    @Path("/contracts/{number}")
+    @Operation(summary = "Supprime un contract par son numéro")
+    @APIResponses(
+        APIResponse(responseCode = "204", description = "suppression réussie"),
+        APIResponse(responseCode = "404", description = "Not found")
+    )
+    fun del(
+        @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
+        @PathParam("number") number: String
+    ): Response {
+        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        service.delContract(contrat)
+        return Response.noContent().build()
     }
 
 
@@ -210,7 +257,7 @@ class ContractResource {
         @QueryParam("offset") offset: Int = 0,
         @Parameter(description = "nombre max d’élément dans la liste, default 20", example = "20")
         @QueryParam("limit") limit: Int = 20,
-        @Parameter(description = "filtrer par status") @QueryParam("status") status: String?,
+        @Parameter(description = "filtrer par status", deprecated = true) @QueryParam("status") status: String?,
         @Parameter(
             description = "filtrer par numéros de contrats séparé par un pipe |",
             style = ParameterStyle.PIPEDELIMITED
@@ -221,7 +268,7 @@ class ContractResource {
         @Parameter(description = "Recherche plain text", example = "c1 big risk")
         @QueryParam("query") query: String?
     ): Response {
-        var tmp = service.getContracts().filter { it.personId == id }
+        val tmp = service.getContracts().filter { it.personId == id }
         return Response.ok(
             tmp.sortedBy { it.number }.toList()
                 .subList(offset, (offset + limit).coerceAtMost(tmp.size))
