@@ -1,4 +1,4 @@
-package org.acme.resources;
+package org.acme.resources
 
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.eclipse.microprofile.openapi.annotations.Operation
@@ -14,7 +14,7 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
-@Tag(name = "z Autres demonstration", description = "une resource pour montrer d'autres comportements")
+@Tag(name = "z Autres demonstrations", description = "une resource pour montrer d'autres comportements")
 @Path("/v1/showcase")
 class ShowcaseResource {
 
@@ -53,5 +53,5 @@ class ShowcaseResource {
     )
     @Produces(MediaType.TEXT_PLAIN)
     fun showVersion() = version
-    
+
 }
