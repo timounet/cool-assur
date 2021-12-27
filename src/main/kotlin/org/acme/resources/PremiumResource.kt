@@ -8,10 +8,12 @@ import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
+import java.net.URI
 import javax.enterprise.inject.Default
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -47,7 +49,7 @@ class PremiumResource {
             )]
         ), APIResponse(responseCode = "404", description = "contract Not found")
     )
-    fun listUsersContracts(
+    fun listContractPremiums(
         @Parameter(
             description = "numero de contrat",
             example = "c1",
@@ -65,5 +67,74 @@ class PremiumResource {
         return Response.ok(
             tmp.subList(offset, (offset + limit).coerceAtMost(tmp.size))
         ).build()
+    }
+
+    @POST
+    @Path("/contracts/{number}/premiums")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Ajout un nouvel appel de prime au contrat")
+    @APIResponses(
+        APIResponse(
+            responseCode = "201", description = "creation réussie",
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON,
+                schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1/premiums"
+            )]
+        ),
+        APIResponse(responseCode = "404", description = "Not found")
+    )
+    fun addContractPremium(
+        @RequestBody(
+            required = true,
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON, schema =
+                Schema(implementation = Premium::class)
+            )]
+        ) p: Premium,
+        @Parameter(
+            description = "numero de contrat",
+            example = "c1",
+            required = true
+        ) @PathParam("number") number: String
+    ): Response {
+        val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        service.delContract(contract)
+        contract.premiums = contract.premiums.plusElement(p)
+        service.addContract(contract)
+        return Response.created(URI.create("/v1/contracts/$number/premiums")).build()
+    }
+
+
+    @DELETE
+    @Path("/contracts/{number}/premiums")
+    @Operation(summary = "Supprime un appel de prime au contract")
+    @APIResponses(
+        APIResponse(responseCode = "204", description = "suppression réussie"),
+        APIResponse(responseCode = "404", description = "Not found")
+    )
+    fun delContractPremium(
+        @RequestBody(
+            required = true,
+            content = [Content(
+                mediaType = MediaType.APPLICATION_JSON, schema =
+                Schema(implementation = Premium::class)
+            )]
+        ) p: Premium,
+        @Parameter(
+            description = "numero de contrat",
+            example = "c1",
+            required = true
+        ) @PathParam("number") number: String
+    ): Response {
+        val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        val premium =
+            contract.premiums.find { it.amount == p.amount && it.dueDate == p.dueDate } ?: return Response.status(
+                404
+            )
+                .build()
+        service.delContract(contract)
+        contract.premiums = contract.premiums.minusElement(premium)
+        service.addContract(contract)
+        return Response.noContent().build()
     }
 }
