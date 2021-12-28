@@ -2,6 +2,9 @@ package org.acme.resources
 
 import org.acme.services.ContractService
 import org.acme.vo.Contract
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.ParameterStyle
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
@@ -51,6 +54,12 @@ class ContractResource {
             schema = Schema(implementation = Array<Contract>::class)
         )]
     )
+    @Counted(name = "ContractsListCount", description = "Compte le nombre d'appel à la liste de contrats")
+    @Timed(
+        name = "ContractsListTime",
+        description = "Mesure le temps de réponse de la liste de contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun list(
         @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
         @QueryParam("offset") offset: Int = 0,
@@ -82,6 +91,12 @@ class ContractResource {
             schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1"
         )]
     )
+    @Counted(name = "ContractAddCount", description = "Compte le nombre d'appel à l'ajout de contrats")
+    @Timed(
+        name = "ContractAddTime",
+        description = "Mesure le temps de réponse de l'ajout de contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun add(
         @RequestBody(
             required = true,
@@ -108,6 +123,12 @@ class ContractResource {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "ContractModifyCount", description = "Compte le nombre d'appel à la modification de contrats")
+    @Timed(
+        name = "ContractModifyTime",
+        description = "Mesure le temps de réponse de la modification de contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun updateContract(
         @RequestBody(
             required = true,
@@ -129,6 +150,12 @@ class ContractResource {
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
+    )
+    @Counted(name = "ContractDeleteCount", description = "Compte le nombre d'appel à la suppression de contrats")
+    @Timed(
+        name = "ContractDeleteTime",
+        description = "Mesure le temps de réponse de la suppression de contrats",
+        unit = MetricUnits.MILLISECONDS
     )
     fun del(
         @RequestBody(
@@ -157,6 +184,12 @@ class ContractResource {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "ContractGetByNumCount", description = "Compte le nombre d'appel à la récupération d'un contrat")
+    @Timed(
+        name = "ContractGetByNumTime",
+        description = "Mesure le temps de réponse de la récupération de contrat",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun getContract(
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
@@ -178,6 +211,12 @@ class ContractResource {
             )]
         ),
         APIResponse(responseCode = "404", description = "Not found")
+    )
+    @Counted(name = "ContractModifyByNumCount", description = "Compte le nombre d'appel à la modification d'un contrat")
+    @Timed(
+        name = "ContractModifyByNumTime",
+        description = "Mesure le temps de réponse de la modification de contrat",
+        unit = MetricUnits.MILLISECONDS
     )
     fun updateContractByNum(
         @RequestBody(
@@ -203,6 +242,12 @@ class ContractResource {
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "ContractDeleteByNumCount", description = "Compte le nombre d'appel à la suppression d'un contrat")
+    @Timed(
+        name = "ContractDeleteByNumTime",
+        description = "Mesure le temps de réponse de la modification de contrat",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun del(
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
@@ -223,6 +268,12 @@ class ContractResource {
             mediaType = "image/png",
             schema = Schema(type = SchemaType.STRING, format = "binary")
         )]
+    )
+    @Counted(name = "ContractPreviewByNumCount", description = "Compte le nombre d'appel à la preview d'un contrat")
+    @Timed(
+        name = "ContractPreviewByNumTime",
+        description = "Mesure le temps de réponse de la preview de contrat",
+        unit = MetricUnits.MILLISECONDS
     )
     fun contractImgPreview(
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
@@ -245,6 +296,15 @@ class ContractResource {
                 schema = Schema(implementation = Array<Contract>::class)
             )]
         ), APIResponse(responseCode = "404", description = "Person Not found")
+    )
+    @Counted(
+        name = "ContractGetByPersonIDCount",
+        description = "Compte le nombre d'appel à la récupération des contrats d'une person id"
+    )
+    @Timed(
+        name = "ContractGetByPersonIDTime",
+        description = "Mesure le temps de réponse de la récupération des contrats d'une person id",
+        unit = MetricUnits.MILLISECONDS
     )
     fun listUsersContracts(
         @Parameter(
