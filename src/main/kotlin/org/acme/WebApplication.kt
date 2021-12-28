@@ -18,7 +18,7 @@ import javax.ws.rs.core.Application
     servers = [
         Server(url = "https://uat-france.apis.allianz.com/aq/formation/coolassur", description = "uat avec ApiGee"),
         /*Server(url = "https://dev-france.apis.allianz/aq/formation/coolassur"),*/
-        Server(url = "http://localhost:8080", description = "dev"),
+        Server(url = "/", description = "local"),
         Server(url = "https://recette-host", description = "recette"),
         Server(url = "https://prod-host", description = "prod"),
         Server(url = "https://coolassur.adho.fr", description = "uat sans ApiGee")
