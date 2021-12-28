@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+  namespace: ns-az-training
+  labels:
+    app: prometheus
+spec:
+  ports:
+    - port: 9090
+      nodePort: 30877
+  selector:
+    app: prometheus
+  type: NodePort

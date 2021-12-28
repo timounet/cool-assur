@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  namespace: ns-az-training
+spec:
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      name: prometheus-pod
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus-con
+          image: prom/prometheus
+          ports:
+            - containerPort: 9090
+              name: prometheus-con
+          volumeMounts:
+            - name: configuration-mount
+              mountPath: /etc/prometheus
+            - name: volume-mount
+              mountPath: /prometheus
+      volumes:
+        - name: configuration-mount
+          configMap:
+            name: prometheus-configuration
+        - name: volume-mount
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
