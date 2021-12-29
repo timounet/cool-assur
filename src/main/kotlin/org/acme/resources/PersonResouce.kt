@@ -2,6 +2,9 @@ package org.acme.resources
 
 import org.acme.sample.SampleValues
 import org.acme.vo.Person
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -49,6 +52,12 @@ class PersonResouce {
             schema = Schema(implementation = Array<Person>::class)
         )]
     )
+    @Counted(name = "PersonsListCount", description = "Compte le nombre d'appel à la liste de personnes")
+    @Timed(
+        name = "PersonsListTime",
+        description = "Mesure le temps de réponse de la liste de personnes",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun list(
         @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
         @QueryParam("offset") offset: Int = 0,
@@ -77,6 +86,12 @@ class PersonResouce {
             schema = Schema(implementation = URI::class), example = "http://server:port/v1/persons/1"
         )]
     )
+    @Counted(name = "PersonsAddCount", description = "Compte le nombre d'appel à la creation de personnes")
+    @Timed(
+        name = "PersonsAddTime",
+        description = "Mesure le temps de réponse de la creation de personnes",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun add(
         @RequestBody(
             required = true,
@@ -103,6 +118,12 @@ class PersonResouce {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "PersonsModifyCount", description = "Compte le nombre d'appel à la modification de personnes")
+    @Timed(
+        name = "PersonsModifyTime",
+        description = "Mesure le temps de réponse de la modification de personnes",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun updatePerson(
         @RequestBody(
             required = true,
@@ -125,7 +146,12 @@ class PersonResouce {
         APIResponse(responseCode = "204", description = "Suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
     )
-
+    @Counted(name = "PersonsDelCount", description = "Compte le nombre d'appel à la suppression de personnes")
+    @Timed(
+        name = "PersonsDelTime",
+        description = "Mesure le temps de réponse de la suppression de personnes",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun del(
         @RequestBody(
             required = true,
@@ -153,6 +179,12 @@ class PersonResouce {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "PersonsListByIDCount", description = "Compte le nombre d'appel à la liste de personnes par ID")
+    @Timed(
+        name = "PersonsListByIDTime",
+        description = "Mesure le temps de réponse de la liste de personnes par ID",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun getById(
         @Parameter(
             description = "retrouver une personne par id",
@@ -175,6 +207,12 @@ class PersonResouce {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "PersonsModifyByIDCount", description = "Compte le nombre d'appel à la modification de personnes par ID")
+    @Timed(
+        name = "PersonsModifyByIDTime",
+        description = "Mesure le temps de réponse de la modification de personnes par ID",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun updatePersonbyId(
         @Parameter(
             description = "retrouver une personne par id",
@@ -196,7 +234,12 @@ class PersonResouce {
         return Response.created(URI.create("/v1/persons/" + person.id)).build()
     }
 
-
+    @Counted(name = "PersonsDelByIDCount", description = "Compte le nombre d'appel à la suppression de personnes par ID")
+    @Timed(
+        name = "PersonsDelByIDTime",
+        description = "Mesure le temps de réponse de la suppression de personnes par ID",
+        unit = MetricUnits.MILLISECONDS
+    )
     @DELETE
     @Path("/{id}")
     @Operation(summary = "Supprime une personne par id")

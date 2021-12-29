@@ -59,3 +59,42 @@ If you want to learn more about building native executables, please consult http
 Monitor your application's health using SmallRye Health
 
 [Related guide section...](https://quarkus.io/guides/smallrye-health)
+
+
+# Run in kubernets
+Cool Assur Application can be deployed in standalone or with Prometheus / Grafana stack
+Pre-requisite: 
+- Kubernetes files required an existing dedicated namespace named : `ns-az-training`
+
+To deploy a demo of prometheus / grafana
+```shell script
+# from internet
+kubectl create -k https://github.com/timounet/cool-assur/tree/main/src/main/kubernetes
+# from source code
+kubectl create -k src/main/kubernetes
+```
+
+kustomization will instantiate 
+- Prometheus
+  - pvc
+  - svc : with nodePort 30877
+  - deployment
+  - configMap
+- grafana
+  - pvc
+  - svc: with nodePort 30878
+  - deployment
+
+To deploy cool assur app on kubernetes, the best way is to retrieve latest build artifacts with generated kubernetes files
+- stable version from [artifact of the latest main build](https://github.com/timounet/cool-assur/actions?query=branch%3Amain)
+- dev version from [artifact of the latest develop build](https://github.com/timounet/cool-assur/actions?query=branch%3Adevelop)
+
+Artifact is a zip files with kubernetes files (json and yml)
+```shell script
+# unzip artifact and execute
+kubectl apply -f kubernetes.yml
+
+# Or on development environment
+.\mvnw package
+kubectl apply -f target/kubernetes/kubernetes.yml
+```
