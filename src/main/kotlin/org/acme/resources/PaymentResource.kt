@@ -2,6 +2,9 @@ package org.acme.resources
 
 import org.acme.services.ContractService
 import org.acme.vo.Payment
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -49,6 +52,12 @@ class PaymentResource {
             )]
         ), APIResponse(responseCode = "404", description = "contract Not found")
     )
+    @Counted(name = "ContractPaymentsListCount", description = "Compte le nombre d'appel à la liste de paiments par contrats")
+    @Timed(
+        name = "ContractPaymentsListTime",
+        description = "Mesure le temps de réponse de la liste de paiments par contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun listContractPayments(
         @Parameter(
             description = "numero de contrat",
@@ -83,6 +92,12 @@ class PaymentResource {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "ContractPaymentsAddCount", description = "Compte le nombre d'appel à la creation de paiments par contrats")
+    @Timed(
+        name = "ContractPaymentsAddTime",
+        description = "Mesure le temps de réponse de la creation de paiments par contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun addContractPayment(
         @RequestBody(
             required = true,
@@ -111,6 +126,12 @@ class PaymentResource {
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
+    )
+    @Counted(name = "ContractPaymentsDelCount", description = "Compte le nombre d'appel à la suppression de paiments par contrats")
+    @Timed(
+        name = "ContractPaymentsDelTime",
+        description = "Mesure le temps de réponse de la suppression de paiments par contrats",
+        unit = MetricUnits.MILLISECONDS
     )
     fun delContractPayment(
         @RequestBody(

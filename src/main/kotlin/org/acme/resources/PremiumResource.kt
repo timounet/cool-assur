@@ -2,6 +2,9 @@ package org.acme.resources
 
 import org.acme.services.ContractService
 import org.acme.vo.Premium
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -49,6 +52,12 @@ class PremiumResource {
             )]
         ), APIResponse(responseCode = "404", description = "contract Not found")
     )
+    @Counted(name = "ContractPremiumsListCount", description = "Compte le nombre d'appel à la liste de primes par contrats")
+    @Timed(
+        name = "ContractPremiumsListTime",
+        description = "Mesure le temps de réponse de la liste de primes par contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun listContractPremiums(
         @Parameter(
             description = "numero de contrat",
@@ -83,6 +92,12 @@ class PremiumResource {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
+    @Counted(name = "ContractPremiumsAddCount", description = "Compte le nombre d'appel à la creation de primes par contrats")
+    @Timed(
+        name = "ContractPremiumsAddTime",
+        description = "Mesure le temps de réponse de la creation de primes par contrats",
+        unit = MetricUnits.MILLISECONDS
+    )
     fun addContractPremium(
         @RequestBody(
             required = true,
@@ -111,6 +126,12 @@ class PremiumResource {
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
+    )
+    @Counted(name = "ContractPremiumsDelCount", description = "Compte le nombre d'appel à la suppression de primes par contrats")
+    @Timed(
+        name = "ContractPremiumsDelTime",
+        description = "Mesure le temps de réponse de la suppression de primes par contrats",
+        unit = MetricUnits.MILLISECONDS
     )
     fun delContractPremium(
         @RequestBody(

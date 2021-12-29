@@ -1,6 +1,9 @@
 package org.acme.resources
 
 import org.eclipse.microprofile.config.inject.ConfigProperty
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType
 import org.eclipse.microprofile.openapi.annotations.media.Content
@@ -32,6 +35,12 @@ class ShowcaseResource {
             schema = Schema(type = SchemaType.STRING)
         )]
     )
+    @Counted(name = "randomErrorCount", description = "Compte le nombre d'appel à randomError")
+    @Timed(
+        name = "randomErrorTime",
+        description = "Mesure le temps de réponse de la liste de randomError",
+        unit = MetricUnits.MILLISECONDS
+    )
     @Produces(MediaType.TEXT_PLAIN)
     fun randomError(): Response {
         val rnds = (0..1).random()
@@ -50,6 +59,12 @@ class ShowcaseResource {
             mediaType = MediaType.TEXT_PLAIN,
             schema = Schema(type = SchemaType.STRING)
         )]
+    )
+    @Counted(name = "versionCount", description = "Compte le nombre d'appel à version")
+    @Timed(
+        name = "versionTime",
+        description = "Mesure le temps de réponse de la liste de version",
+        unit = MetricUnits.MILLISECONDS
     )
     @Produces(MediaType.TEXT_PLAIN)
     fun showVersion() = version

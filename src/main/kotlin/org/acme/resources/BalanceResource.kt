@@ -1,6 +1,9 @@
 package org.acme.resources
 
 import org.acme.services.ContractService
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -43,6 +46,12 @@ class BalanceResource {
             mediaType = MediaType.TEXT_PLAIN,
             schema = Schema(implementation = Float::class)
         )]
+    )
+    @Counted(name = "balanceCount", description = "Compte le nombre d'appel au solde")
+    @Timed(
+        name = "balanceTime",
+        description = "Mesure le temps de réponse du solde",
+        unit = MetricUnits.MILLISECONDS
     )
     fun balance(
         @Parameter(description = "filtrer par numéro de contrat") @QueryParam("number") number: String?,

@@ -2,6 +2,9 @@ package org.acme.resources
 
 import org.acme.vo.Token
 import org.acme.vo.User
+import org.eclipse.microprofile.metrics.MetricUnits
+import org.eclipse.microprofile.metrics.annotation.Counted
+import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
@@ -19,6 +22,12 @@ import javax.ws.rs.core.Response
 @Tag(name = "Gestion des utilisateur", description = "une ressource pour les utilisateurs de l'application")
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
+@Counted(name = "authenticateCount", description = "Compte le nombre d'appel à l'authentification")
+@Timed(
+    name = "authenticateTime",
+    description = "Mesure le temps de réponse de l'authentification",
+    unit = MetricUnits.MILLISECONDS
+)
 class UserResource {
     @GET
     @Path("/authenticate")
@@ -42,6 +51,12 @@ class UserResource {
             mediaType = MediaType.APPLICATION_JSON,
             schema = Schema(implementation = User::class)
         )]
+    )
+    @Counted(name = "meCount", description = "Compte le nombre d'appel à me: mes infos")
+    @Timed(
+        name = "meTime",
+        description = "Mesure le temps de réponse de à me: mes infos",
+        unit = MetricUnits.MILLISECONDS
     )
     @SecurityScheme(
         securitySchemeName = "Authentication",
