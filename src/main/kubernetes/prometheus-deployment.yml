@@ -18,6 +18,9 @@ spec:
       containers:
         - name: prometheus-con
           image: prom/prometheus
+          resources:
+            limits:
+              memory: "400Mi"
           ports:
             - containerPort: 9090
               name: prometheus-con

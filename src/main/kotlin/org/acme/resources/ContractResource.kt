@@ -40,6 +40,8 @@ import javax.ws.rs.core.Response
 )
 class ContractResource {
 
+    val unauthorizedContract = "c101"
+
     @Inject
     @field: Default
     lateinit var service: ContractService
@@ -112,7 +114,7 @@ class ContractResource {
 
     @PUT
     @Path("/contracts")
-    @Operation(summary = "Modifie un contrat existant", deprecated = true)
+    @Operation(summary = "Modifie un contrat existant, deprecated : remplacer par /contracts/{number}", deprecated = true)
     @Consumes(MediaType.APPLICATION_JSON)
     @APIResponses(
         APIResponse(
@@ -146,7 +148,7 @@ class ContractResource {
 
     @DELETE
     @Path("/contracts")
-    @Operation(summary = "Supprime un contract", deprecated = true)
+    @Operation(summary = "Supprime un contract, deprecated : remplacer par /contracts/{number}", deprecated = true)
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
@@ -182,7 +184,8 @@ class ContractResource {
                 schema = Schema(implementation = Contract::class)
             )]
         ),
-        APIResponse(responseCode = "404", description = "Not found")
+        APIResponse(responseCode = "404", description = "Not found"),
+        APIResponse(responseCode = "403", description = "Privilèges insuffisant pour accèder à la ressource")
     )
     @Counted(name = "ContractGetByNumCount", description = "Compte le nombre d'appel à la récupération d'un contrat")
     @Timed(
@@ -194,6 +197,7 @@ class ContractResource {
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
+        if (number == unauthorizedContract) return Response.status(403).build()
         val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         return Response.ok(contrat).build()
     }
@@ -210,7 +214,8 @@ class ContractResource {
                 schema = Schema(implementation = URI::class), example = "http://server:port/v1/contracts/c1"
             )]
         ),
-        APIResponse(responseCode = "404", description = "Not found")
+        APIResponse(responseCode = "404", description = "Not found"),
+        APIResponse(responseCode = "403", description = "Privilèges insuffisant pour accèder à la ressource")
     )
     @Counted(name = "ContractModifyByNumCount", description = "Compte le nombre d'appel à la modification d'un contrat")
     @Timed(
@@ -229,6 +234,7 @@ class ContractResource {
         @Parameter(description = "modifie un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
+        if (number == unauthorizedContract) return Response.status(403).build()
         val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         service.delContract(contract)
         service.addContract(c)
@@ -240,7 +246,8 @@ class ContractResource {
     @Operation(summary = "Supprime un contract par son numéro")
     @APIResponses(
         APIResponse(responseCode = "204", description = "suppression réussie"),
-        APIResponse(responseCode = "404", description = "Not found")
+        APIResponse(responseCode = "404", description = "Not found"),
+        APIResponse(responseCode = "403", description = "Privilèges insuffisant pour accèder à la ressource")
     )
     @Counted(name = "ContractDeleteByNumCount", description = "Compte le nombre d'appel à la suppression d'un contrat")
     @Timed(
@@ -252,6 +259,7 @@ class ContractResource {
         @Parameter(description = "retrouver un contrat par son numéro", example = "c1")
         @PathParam("number") number: String
     ): Response {
+        if (number == unauthorizedContract) return Response.status(403).build()
         val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         service.delContract(contract)
         return Response.noContent().build()
