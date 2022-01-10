@@ -66,6 +66,8 @@ Cool Assur Application can be deployed in standalone or with Prometheus / Grafan
 Pre-requisite: 
 - Kubernetes files required an existing dedicated namespace named : `ns-az-training`
 
+```kubectl config set-context --current --namespace=ns-az-training```
+
 To deploy a demo of prometheus / grafana
 ```shell script
 # from internet
@@ -97,4 +99,24 @@ kubectl apply -f kubernetes.yml
 # Or on development environment
 .\mvnw package
 kubectl apply -f target/kubernetes/kubernetes.yml
+```
+
+## To destroy kubernetes deployment
+cool assur app:
+```shell script
+# unzip artifact and execute
+kubectl delete -f kubernetes.yml
+
+# Or on development environment
+.\mvnw package
+kubectl delete -f target/kubernetes/kubernetes.yml
+```
+
+prometheus / grafana:
+(!) pvc (=data) would be destroyed as well
+```shell script
+# from internet
+kubectl delete -k https://github.com/timounet/cool-assur/tree/main/src/main/kubernetes
+# from source code
+kubectl delete -k src/main/kubernetes
 ```

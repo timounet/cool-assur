@@ -19,6 +19,9 @@ spec:
       containers:
         - name: grafana-con
           image: grafana/grafana
+          resources:
+            limits:
+              memory: "300Mi"
           ports:
             - name: grafana-con
               containerPort: 3000
