@@ -40,7 +40,7 @@ data class Payment(
 
 @RegisterForReflection
 data class Token(
-    @JsonbProperty("token") var token: String = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQRVJEUklUIiwiYXV0aCI6W3siYXV0aG9yaXR5IjoiUk9MRV9OU1AuRklELlBFUklNRVRSRS5UT1VULlJFQ0VUVEUifV0sImlhdCI6MTYzOTE0MTY0OSwiZXhwIjoxNjM5MjI4MDQ5fQ.qyX3zDh0b_konshhbuVyM7HjUhC_mXwFjVyJ-H7xOGc",
+    @JsonbProperty("token") var token: String = "8sTTJAcA8rnoIoyOmnzqpeIv407nlssK",
 )
 
 @RegisterForReflection

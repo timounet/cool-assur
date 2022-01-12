@@ -1,13 +1,24 @@
 package org.acme
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.info.Contact
 import org.eclipse.microprofile.openapi.annotations.info.Info
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
 import org.eclipse.microprofile.openapi.annotations.servers.Server
 import javax.ws.rs.ApplicationPath
 import javax.ws.rs.core.Application
 
-@ApplicationPath("/v1")
+@SecurityScheme(
+    securitySchemeName = "CoolAssurAuthentication",
+    description = "Authentication with APIKEY token in header",
+    type = SecuritySchemeType.APIKEY,
+    //bearerFormat = "JWT",
+    apiKeyName = "token",
+    `in` = SecuritySchemeIn.HEADER
+)
+@ApplicationPath("/")
 @OpenAPIDefinition(
     info = Info(
         title = "CoolAssur Application",
