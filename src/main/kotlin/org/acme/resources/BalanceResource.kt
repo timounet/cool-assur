@@ -5,13 +5,11 @@ import org.eclipse.microprofile.metrics.MetricUnits
 import org.eclipse.microprofile.metrics.annotation.Counted
 import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import javax.enterprise.inject.Default
 import javax.inject.Inject
@@ -22,15 +20,8 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion du solde", description = "tout ce qui touche aux soldes pour les comptes")
-@Path("/")
-@SecurityScheme(
-    securitySchemeName = "Authentication",
-    description = "JWT token",
-    type = SecuritySchemeType.HTTP,
-    scheme = "bearer",
-    bearerFormat = "JWT",
-    `in` = SecuritySchemeIn.HEADER
-)
+@Path("/v1/")
+@SecurityRequirement(name = "CoolAssurAuthentication")
 class BalanceResource {
 
     @Inject

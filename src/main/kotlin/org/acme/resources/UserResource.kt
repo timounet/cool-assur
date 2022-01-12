@@ -6,12 +6,10 @@ import org.eclipse.microprofile.metrics.MetricUnits
 import org.eclipse.microprofile.metrics.annotation.Counted
 import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import javax.ws.rs.GET
 import javax.ws.rs.Path
@@ -20,7 +18,7 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion des utilisateur", description = "une ressource pour les utilisateurs de l'application")
-@Path("/users")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Counted(name = "authenticateCount", description = "Compte le nombre d'appel à l'authentification")
 @Timed(
@@ -28,6 +26,7 @@ import javax.ws.rs.core.Response
     description = "Mesure le temps de réponse de l'authentification",
     unit = MetricUnits.MILLISECONDS
 )
+
 class UserResource {
     @GET
     @Path("/authenticate")
@@ -43,7 +42,7 @@ class UserResource {
 
 
     @GET
-    @Path("/me")
+    @Path("/v1/users/me")
     @Operation(summary = "Information sur l'utilisateur connecté")
     @APIResponse(
         responseCode = "200", description = "liste réussie",
@@ -58,13 +57,6 @@ class UserResource {
         description = "Mesure le temps de réponse de à me: mes infos",
         unit = MetricUnits.MILLISECONDS
     )
-    @SecurityScheme(
-        securitySchemeName = "Authentication",
-        description = "JWT token",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        `in` = SecuritySchemeIn.HEADER
-    )
+    @SecurityRequirement(name = "CoolAssurAuthentication")
     fun me(): Response = Response.ok(User()).build()
 }

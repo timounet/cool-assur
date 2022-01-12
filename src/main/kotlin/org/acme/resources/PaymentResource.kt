@@ -6,15 +6,13 @@ import org.eclipse.microprofile.metrics.MetricUnits
 import org.eclipse.microprofile.metrics.annotation.Counted
 import org.eclipse.microprofile.metrics.annotation.Timed
 import org.eclipse.microprofile.openapi.annotations.Operation
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeIn
-import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType
 import org.eclipse.microprofile.openapi.annotations.media.Content
 import org.eclipse.microprofile.openapi.annotations.media.Schema
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
-import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.tags.Tag
 import java.net.URI
 import javax.enterprise.inject.Default
@@ -24,16 +22,9 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Tag(name = "Gestion des paiements", description = "tout ce qui touche aux paiements")
-@Path("/")
+@Path("/v1/")
 @Produces(MediaType.APPLICATION_JSON)
-@SecurityScheme(
-    securitySchemeName = "Authentication",
-    description = "JWT token",
-    type = SecuritySchemeType.HTTP,
-    scheme = "bearer",
-    bearerFormat = "JWT",
-    `in` = SecuritySchemeIn.HEADER
-)
+@SecurityRequirement(name = "CoolAssurAuthentication")
 class PaymentResource {
 
     @Inject
@@ -52,7 +43,10 @@ class PaymentResource {
             )]
         ), APIResponse(responseCode = "404", description = "contract Not found")
     )
-    @Counted(name = "ContractPaymentsListCount", description = "Compte le nombre d'appel à la liste de paiments par contrats")
+    @Counted(
+        name = "ContractPaymentsListCount",
+        description = "Compte le nombre d'appel à la liste de paiments par contrats"
+    )
     @Timed(
         name = "ContractPaymentsListTime",
         description = "Mesure le temps de réponse de la liste de paiments par contrats",
@@ -92,7 +86,10 @@ class PaymentResource {
         ),
         APIResponse(responseCode = "404", description = "Not found")
     )
-    @Counted(name = "ContractPaymentsAddCount", description = "Compte le nombre d'appel à la creation de paiments par contrats")
+    @Counted(
+        name = "ContractPaymentsAddCount",
+        description = "Compte le nombre d'appel à la creation de paiments par contrats"
+    )
     @Timed(
         name = "ContractPaymentsAddTime",
         description = "Mesure le temps de réponse de la creation de paiments par contrats",
@@ -127,7 +124,10 @@ class PaymentResource {
         APIResponse(responseCode = "204", description = "suppression réussie"),
         APIResponse(responseCode = "404", description = "Not found")
     )
-    @Counted(name = "ContractPaymentsDelCount", description = "Compte le nombre d'appel à la suppression de paiments par contrats")
+    @Counted(
+        name = "ContractPaymentsDelCount",
+        description = "Compte le nombre d'appel à la suppression de paiments par contrats"
+    )
     @Timed(
         name = "ContractPaymentsDelTime",
         description = "Mesure le temps de réponse de la suppression de paiments par contrats",
