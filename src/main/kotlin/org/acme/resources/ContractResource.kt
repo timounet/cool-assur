@@ -54,19 +54,22 @@ class ContractResource {
         unit = MetricUnits.MILLISECONDS
     )
     fun list(
-        @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
-        @QueryParam("offset") offset: Int = 0,
-        @Parameter(description = "nombre max d’élément dans la liste, default 20", example = "20")
-        @QueryParam("limit") limit: Int = 20,
+        @Parameter(description = "débuter la liste à cette valeur offset")
+        @DefaultValue("0")
+        @QueryParam("offset") offset: Int,
+        @Parameter(description = "nombre max d’élément dans la liste")
+        @DefaultValue("20")
+        @QueryParam(value = "limit") limit: Int,
         @Parameter(description = "filtrer par status") @QueryParam("status") status: String?,
         @Parameter(
             description = "filtrer par numéros de contrats séparé par un pipe |",
             style = ParameterStyle.PIPEDELIMITED
         )
         @QueryParam("numbers") numbers: String?,
-        @Parameter(description = "trier la liste sur un champ, defaut 'asc(number)'")
+        @Parameter(description = "trier la liste sur un champ")
+        @DefaultValue("asc(number)")
         @QueryParam("sortBy") orderBy: String?,
-        @Parameter(description = "Recherche plain text", example = "c1 big risk")
+        @Parameter(description = "Recherche plain text")
         @QueryParam("query") query: String?
     ): Response = Response.ok(
         service.getContracts().sortedBy { it.number }.toList()
@@ -315,17 +318,20 @@ class ContractResource {
             required = true
         )
         @PathParam("id") id: Int,
-        @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
-        @QueryParam("offset") offset: Int = 0,
-        @Parameter(description = "nombre max d’élément dans la liste, default 20", example = "20")
-        @QueryParam("limit") limit: Int = 20,
+        @DefaultValue("0")
+        @Parameter(description = "débuter la liste à cette valeur offset")
+        @QueryParam("offset") offset: Int,
+        @Parameter(description = "nombre max d’élément dans la liste")
+        @DefaultValue("20")
+        @QueryParam("limit") limit: Int,
         @Parameter(description = "filtrer par status", deprecated = true) @QueryParam("status") status: String?,
         @Parameter(
             description = "filtrer par numéros de contrats séparé par un pipe |",
             style = ParameterStyle.PIPEDELIMITED
         )
         @QueryParam("numbers") numbers: String?,
-        @Parameter(description = "trier la liste sur un champ, defaut 'asc(number)'")
+        @Parameter(description = "trier la liste sur un champ")
+        @DefaultValue("asc(number)")
         @QueryParam("sortBy") orderBy: String?,
         @Parameter(description = "Recherche plain text", example = "c1 big risk")
         @QueryParam("query") query: String?

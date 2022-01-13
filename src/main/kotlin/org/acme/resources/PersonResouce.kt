@@ -50,15 +50,18 @@ class PersonResouce {
         unit = MetricUnits.MILLISECONDS
     )
     fun list(
-        @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
-        @QueryParam("offset") offset: Int = 0,
-        @Parameter(description = "nombre max d’élément dans la liste, default 20", example = "20")
-        @QueryParam("limit") limit: Int = 20,
+        @Parameter(description = "débuter la liste à cette valeur offset")
+        @DefaultValue("0")
+        @QueryParam("offset") offset: Int,
+        @Parameter(description = "nombre max d’élément dans la liste")
+        @DefaultValue("20")
+        @QueryParam("limit") limit: Int,
         @Parameter(description = "filtrer par prénom")
         @QueryParam("firstname") firstName: String?,
         @Parameter(description = "filtrer par nom")
         @QueryParam("lastname") lastName: String?,
-        @Parameter(description = "trier la liste sur un champ, defaut 'asc(id)'")
+        @Parameter(description = "trier la liste sur un champ")
+        @DefaultValue("asc(id)")
         @QueryParam("sortBy") orderBy: String?,
         @Parameter(description = "Recherche plain text", example = "Bruce Ouillis Paris")
         @QueryParam("query") query: String?

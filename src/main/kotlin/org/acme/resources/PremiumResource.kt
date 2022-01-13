@@ -59,11 +59,14 @@ class PremiumResource {
             required = true
         )
         @PathParam("number") number: String,
-        @Parameter(description = "débuter la liste à cette valeur offset, default 0", example = "0")
-        @QueryParam("offset") offset: Int = 0,
-        @Parameter(description = "nombre max d’élément dans la liste, default 20", example = "20")
+        @DefaultValue("0")
+        @Parameter(description = "débuter la liste à cette valeur offset")
+        @QueryParam("offset") offset: Int,
+        @Parameter(description = "nombre max d’élément dans la liste")
+        @DefaultValue("20")
         @QueryParam("limit") limit: Int = 20,
-        @Parameter(description = "trier la liste sur un champ, defaut 'asc(dueDate)'")
+        @Parameter(description = "trier la liste sur un champ")
+        @DefaultValue("asc(dueDate)")
         @QueryParam("sortBy") orderBy: String?
     ): Response {
         val tmp = service.getContracts().first { it.number == number }.premiums
