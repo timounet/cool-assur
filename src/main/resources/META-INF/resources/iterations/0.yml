@@ -11,8 +11,8 @@ info:
 servers:
   - url: https://uat-france.apis.allianz.com/aq/formation/coolassur
     description: uat avec ApiGee
-  - url: http://localhost:8080
-    description: dev
+  - url: /
+    description: local
   - url: https://recette-host
     description: recette
   - url: https://prod-host
@@ -25,6 +25,18 @@ tags:
   - name: Gestion des utilisateur
     description: une ressource pour les utilisateurs de l'application
 paths:
+  /authenticate:
+    get:
+      tags:
+        - Gestion des utilisateur
+      summary: Authentifie et recupère un nouveau jeton jwt de l'utilisateur connecté
+      responses:
+        "200":
+          description: liste réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
   /v1/contracts:
     get:
       tags:
@@ -74,18 +86,139 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Contract'
-  /v1/users/authenticate:
+      security:
+        - CoolAssurAuthentication: [ ]
+  /v1/users/me:
     get:
       tags:
         - Gestion des utilisateur
-      summary: Authentifie et recupère un nouveau jeton jwt de l'utilisateur connecté
+      summary: Information sur l'utilisateur connecté
       responses:
         "200":
           description: liste réussie
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: '#/components/schemas/User'
+      security:
+        - CoolAssurAuthentication: [ ]
+  /q/health:
+    summary: MicroProfile Health provides a way for your application to distribute
+      information about its healthiness state to state whether or not it is able to
+      function properly
+    description: MicroProfile Health Endpoint
+    get:
+      tags:
+        - MicroProfile Health
+      summary: "An aggregated view of the Liveness, Readiness and Startup of this\
+        \ application"
+      description: Check the health of the application
+      operationId: microprofile_health_root
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+  /q/health/live:
+    summary: Liveness checks are utilized to tell whether the application should be
+      restarted
+    description: MicroProfile Health - Liveness Endpoint
+    get:
+      tags:
+        - MicroProfile Health
+      summary: The Liveness check of this application
+      description: Check the liveness of the application
+      operationId: microprofile_health_liveness
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+  /q/health/ready:
+    summary: Readiness checks are used to tell whether the application is able to
+      process requests
+    description: MicroProfile Health - Readiness Endpoint
+    get:
+      tags:
+        - MicroProfile Health
+      summary: The Readiness check of this application
+      description: Check the readiness of the application
+      operationId: microprofile_health_readiness
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+  /q/health/started:
+    summary: Startup checks are an used to tell when the application has started
+    description: MicroProfile Health - Startup Endpoint
+    get:
+      tags:
+        - MicroProfile Health
+      summary: The Startup check of this application
+      description: Check the startup of the application
+      operationId: microprofile_health_startup
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
 components:
   schemas:
     Contract:
@@ -118,6 +251,26 @@ components:
           type: string
         date:
           type: string
+    Person:
+      type: object
+      properties:
+        address:
+          type: string
+        firstName:
+          type: string
+        job:
+          type: string
+        lastName:
+          type: string
+        mail:
+          type: string
+        nationality:
+          type: string
+        phone:
+          type: string
+        id:
+          format: int32
+          type: integer
     Premium:
       type: object
       properties:
@@ -131,10 +284,35 @@ components:
       properties:
         token:
           type: string
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        job:
+          type: string
+        lastName:
+          type: string
+        mail:
+          type: string
+    HealthCheckResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          nullable: true
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/HealthCheckStatus'
+    HealthCheckStatus:
+      enum:
+        - DOWN
+        - UP
+      type: string
   securitySchemes:
-    Authentication:
-      type: http
-      description: JWT token
+    CoolAssurAuthentication:
+      type: apiKey
+      description: Authentication with APIKEY token in header
+      name: token
       in: header
-      scheme: bearer
-      bearerFormat: JWT
