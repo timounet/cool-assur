@@ -195,8 +195,8 @@ class ContractResource {
         @PathParam("number") number: String
     ): Response {
         if (number == unauthorizedContract) return Response.status(403).build()
-        val contrat = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
-        return Response.ok(contrat).build()
+        val contract = service.getContracts().find { it.number == number } ?: return Response.status(404).build()
+        return Response.ok(contract).build()
     }
 
 

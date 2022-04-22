@@ -8,6 +8,39 @@ import org.acme.vo.Premium
 class SampleValues {
     companion object {
 
+        val patrick: Person = Person(
+            lastName = "B Ferguson",
+            firstName = "Patrick",
+            nationality = "british",
+            job = "Associate ",
+            address = "497 Pritchard Court",
+            mail = "davonte1981@gmail.com",
+            phone = "507-822-1675",
+            id = 1
+
+        )
+        val janet = Person(
+            lastName = "M Flippen",
+            firstName = "Janet",
+            phone = "516-382-1621",
+            mail = "pietro1985@hotmail.com",
+            address = "788 Stanley Avenue, Garden City, New York(NY), 11530",
+            job = "actress",
+            nationality = "USA",
+            id = 2
+        )
+
+        val sarah = Person(
+            lastName = "Merlino",
+            firstName = "Sarah",
+            phone = "609-969-8157",
+            mail = "evie2004@yahoo.com",
+            address = "3437 Williams Mine Road, Sayreville, New Jersey(NJ), 08872",
+            job = "student",
+            nationality = "USA",
+            id = 3
+        )
+
         val jason: Person = Person(
             lastName = "Statham",
             firstName = "Jason",
@@ -68,6 +101,6 @@ class SampleValues {
             premiums = listOf(premiumQ1, premiumQ2),
             payments = listOf(paymentQ1)
         )
-        
+
     }
 }
