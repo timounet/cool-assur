@@ -25,12 +25,13 @@ import javax.ws.rs.core.Response
 @Path("/v1/persons")
 @Produces(MediaType.APPLICATION_JSON)
 @SecurityRequirement(name = "CoolAssurAuthentication")
-class PersonResouce {
+class PersonResource {
 
     private var persons: Set<Person> = Collections.synchronizedSet(LinkedHashSet())
 
     init {
-        persons = persons.plusElement(SampleValues.jason).plusElement(SampleValues.ripley)
+        persons =
+            persons.plusElement(SampleValues.patrick).plusElement(SampleValues.janet).plusElement(SampleValues.sarah)
     }
 
     @GET
