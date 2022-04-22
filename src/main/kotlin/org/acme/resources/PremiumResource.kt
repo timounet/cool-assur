@@ -69,6 +69,7 @@ class PremiumResource {
         @DefaultValue("asc(dueDate)")
         @QueryParam("sortBy") orderBy: String?
     ): Response {
+        service.getContracts().find { it.number == number } ?: return Response.status(404).build()
         val tmp = service.getContracts().first { it.number == number }.premiums
         return Response.ok(
             tmp.subList(offset, (offset + limit).coerceAtMost(tmp.size))

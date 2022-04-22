@@ -186,7 +186,10 @@ class PersonResouce {
             required = true
         )
         @PathParam("id") id: Int
-    ): Response = Response.ok(persons.first { it.id == id }).build()
+    ): Response {
+        persons.find { it.id == id } ?: return Response.status(404).build()
+        return Response.ok(persons.first { it.id == id }).build()
+    }
 
     @PUT
     @Path("/{id}")
